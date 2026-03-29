@@ -194,6 +194,9 @@ function removeColumn(id) {
 
 window.addColumn = addColumn;
 window.removeColumn = removeColumn;
+window.copyOutput = copyOutput;
+window.downloadCSV = downloadCSV;
+window.generateCSV = generateCSV;
 
 function getColumns() {
     const columns = [];
@@ -223,7 +226,22 @@ function escapeCSVValue(value, separator) {
 
 function getSeparator() {
     const separatorSelect = document.getElementById('separator');
+    if (separatorSelect.value === 'custom') {
+        const custom = document.getElementById('customSeparator').value;
+        return custom || ',';
+    }
     return separatorSelect.value;
+}
+
+// Tampilkan input custom separator jika opsi custom dipilih
+function handleSeparatorChange() {
+    const separatorSelect = document.getElementById('separator');
+    const customInput = document.getElementById('customSeparator');
+    if (separatorSelect.value === 'custom') {
+        customInput.style.display = '';
+    } else {
+        customInput.style.display = 'none';
+    }
 }
 
 function generateCSV() {
@@ -384,13 +402,18 @@ window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
     setupAutoGenerateEvents();
+    handleSeparatorChange();
 });
 
 // === AUTO GENERATE CSV ON INPUT ===
 function setupAutoGenerateEvents() {
     // Static inputs
     document.getElementById('rowCount').addEventListener('input', generateCSV);
-    document.getElementById('separator').addEventListener('change', generateCSV);
+    document.getElementById('separator').addEventListener('change', function() {
+        handleSeparatorChange();
+        generateCSV();
+    });
+    document.getElementById('customSeparator').addEventListener('input', generateCSV);
     document.getElementById('includeHeader').addEventListener('change', generateCSV);
     // Dynamic columns
     function addColumnInputEvents(columnElem) {
