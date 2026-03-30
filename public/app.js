@@ -3,145 +3,19 @@
 // ==========================================
 
 import { DATA_TYPES } from './constants/dataTypes.js';
-import { FIRST_NAMES } from './constants/firstNames.js';
-import { LAST_NAMES } from './constants/lastNames.js';
-import { CITIES } from './constants/cities.js';
-import { COUNTRIES } from './constants/countries.js';
-import { COMPANIES } from './constants/companies.js';
-import { STREET_NAMES } from './constants/streetNames.js';
-import { DOMAINS } from './constants/domains.js';
-import { LOREM_WORDS } from './constants/loremWords.js';
 
 // ==========================================
 // Helper Functions
 // ==========================================
 
-function getRandomItem(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function generateRandomString(length) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
+function escapeCSVValue(value, separator) {
+    const stringValue = String(value);
+    // Check if value needs quoting
+    if (stringValue.includes(separator) || stringValue.includes('"') || stringValue.includes('\n') || stringValue.includes('\r')) {
+        // Escape quotes by doubling them
+        return '"' + stringValue.replace(/"/g, '""') + '"';
     }
-    return result;
-}
-
-function generateFullName() {
-    return getRandomItem(FIRST_NAMES) + ' ' + getRandomItem(LAST_NAMES);
-}
-
-function generateEmail() {
-    const firstName = getRandomItem(FIRST_NAMES).toLowerCase();
-    const lastName = getRandomItem(LAST_NAMES).toLowerCase();
-    const domain = getRandomItem(DOMAINS);
-    const separator = getRandomItem(['.', '_', '']);
-    const number = Math.random() > 0.5 ? getRandomInt(1, 99) : '';
-    return firstName + separator + lastName + number + '@' + domain;
-}
-
-function generatePhone() {
-    const formats = [
-        '+1-XXX-XXX-XXXX',
-        '+62-XXX-XXXX-XXXX',
-        '(XXX) XXX-XXXX',
-        'XXX-XXX-XXXX'
-    ];
-    let format = getRandomItem(formats);
-    return format.replace(/X/g, () => getRandomInt(0, 9));
-}
-
-function generateDate(format) {
-    const start = new Date(2000, 0, 1);
-    const end = new Date();
-    const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
-    switch (format) {
-        case 'YYYY-MM-DD':
-            return `${year}-${month}-${day}`;
-        case 'MM/DD/YYYY':
-            return `${month}/${day}/${year}`;
-        case 'DD/MM/YYYY':
-            return `${day}/${month}/${year}`;
-        default:
-            return `${year}-${month}-${day}`;
-    }
-}
-
-function generateDateTime() {
-    const date = generateDate('YYYY-MM-DD');
-    const time = generateTime();
-    return `${date} ${time}:${String(getRandomInt(0, 59)).padStart(2, '0')}`;
-}
-
-function generateTime() {
-    const hour = String(getRandomInt(0, 23)).padStart(2, '0');
-    const minute = String(getRandomInt(0, 59)).padStart(2, '0');
-    return `${hour}:${minute}`;
-}
-
-function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
-function generateAddress() {
-    const number = getRandomInt(1, 999);
-    const street = getRandomItem(STREET_NAMES);
-    const city = getRandomItem(CITIES);
-    return `${number} ${street}, ${city}`;
-}
-
-function generateURL() {
-    const protocols = ['https://'];
-    const tlds = ['.com', '.org', '.net', '.io', '.co'];
-    const words = ['example', 'demo', 'test', 'sample', 'mysite', 'website', 'app', 'portal'];
-    return protocols[0] + 'www.' + getRandomItem(words) + getRandomItem(tlds);
-}
-
-function generateIPv4() {
-    return `${getRandomInt(1, 255)}.${getRandomInt(0, 255)}.${getRandomInt(0, 255)}.${getRandomInt(1, 254)}`;
-}
-
-function generateHexColor() {
-    return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-}
-
-function generateLoremIpsum() {
-    const wordCount = getRandomInt(5, 12);
-    let words = [];
-    for (let i = 0; i < wordCount; i++) {
-        words.push(getRandomItem(LOREM_WORDS));
-    }
-    return words.join(' ');
-}
-
-function generateUsername() {
-    const adjectives = ['cool', 'super', 'mega', 'ultra', 'pro', 'epic', 'awesome'];
-    const nouns = ['user', 'gamer', 'coder', 'ninja', 'wizard', 'master', 'hero'];
-    return getRandomItem(adjectives) + getRandomItem(nouns) + getRandomInt(1, 999);
-}
-
-function generatePassword() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-    let password = '';
-    for (let i = 0; i < 12; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
+    return stringValue;
 }
 
 // ==========================================
@@ -214,15 +88,6 @@ function getColumns() {
 // CSV Generation
 // ==========================================
 
-function escapeCSVValue(value, separator) {
-    const stringValue = String(value);
-    // Check if value needs quoting
-    if (stringValue.includes(separator) || stringValue.includes('"') || stringValue.includes('\n') || stringValue.includes('\r')) {
-        // Escape quotes by doubling them
-        return '"' + stringValue.replace(/"/g, '""') + '"';
-    }
-    return stringValue;
-}
 
 function getSeparator() {
     const separatorSelect = document.getElementById('separator');
@@ -248,7 +113,6 @@ function generateCSV() {
     const columns = getColumns();
 
     if (columns.length === 0) {
-        alert('Please add at least one column with a name.');
         return;
     }
 
@@ -277,11 +141,12 @@ function generateCSV() {
         rows.push(row.join(separator));
     }
 
-    const output = rows.join('\n');
-    document.getElementById('output').value = output;
+    document.getElementById('output').value = rows.join('\n');
 
     // Reset copy button text
     document.getElementById('copyButton').textContent = 'Copy';
+
+    saveFormState();
 }
 
 // ==========================================
@@ -293,7 +158,6 @@ function copyOutput() {
     const text = output.value;
 
     if (!text) {
-        alert('No CSV data to copy. Please generate CSV first.');
         return;
     }
 
@@ -327,7 +191,6 @@ function downloadCSV() {
     const output = document.getElementById('output').value;
 
     if (!output) {
-        alert('No CSV data to download. Please generate CSV first.');
         return;
     }
 
@@ -355,11 +218,11 @@ function setTheme(dark) {
     if (dark) {
         document.documentElement.classList.add('dark-mode');
         document.body.classList.add('dark-mode');
-        themeIcon.innerHTML = `<svg class="moon-icon" viewBox="0 0 24 24"><path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"></path></svg>`;
+        themeIcon.innerHTML = `<svg class="sun-icon" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zM2 13h2a1 1 0 100-2H2a1 1 0 100 2zm18 0h2a1 1 0 100-2h-2a1 1 0 100 2zM11 2v2a1 1 0 102 0V2a1 1 0 10-2 0zm0 18v2a1 1 0 102 0v-2a1 1 0 10-2 0zM5.99 4.58a1 1 0 10-1.41 1.41l1.06 1.06a1 1 0 101.41-1.41L5.99 4.58zm12.37 12.37a1 1 0 10-1.41 1.41l1.06 1.06a1 1 0 101.41-1.41l-1.06-1.06zm1.06-10.96a1 1 0 10-1.41-1.41l-1.06 1.06a1 1 0 101.41 1.41l1.06-1.06zM7.05 18.36a1 1 0 10-1.41-1.41l-1.06 1.06a1 1 0 101.41 1.41l1.06-1.06z"></path></svg>`;
     } else {
         document.documentElement.classList.remove('dark-mode');
         document.body.classList.remove('dark-mode');
-        themeIcon.innerHTML = `<svg class="sun-icon" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zM2 13h2a1 1 0 100-2H2a1 1 0 100 2zm18 0h2a1 1 0 100-2h-2a1 1 0 100 2zM11 2v2a1 1 0 102 0V2a1 1 0 10-2 0zm0 18v2a1 1 0 102 0v-2a1 1 0 10-2 0zM5.99 4.58a1 1 0 10-1.41 1.41l1.06 1.06a1 1 0 101.41-1.41L5.99 4.58zm12.37 12.37a1 1 0 10-1.41 1.41l1.06 1.06a1 1 0 101.41-1.41l-1.06-1.06zm1.06-10.96a1 1 0 10-1.41-1.41l-1.06 1.06a1 1 0 101.41 1.41l1.06-1.06zM7.05 18.36a1 1 0 10-1.41-1.41l-1.06 1.06a1 1 0 101.41 1.41l1.06-1.06z"></path></svg>`;
+        themeIcon.innerHTML = `<svg class="moon-icon" viewBox="0 0 24 24"><path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"></path></svg>`;
     }
 }
 
@@ -388,19 +251,25 @@ if (themeSwitchBtn && themeIcon) {
 
 // Initialize with default columns
 window.addEventListener('DOMContentLoaded', function() {
-    // Add some default columns
-    addColumn('id', 'sequence');
-    addColumn('name', 'fullName');
-    addColumn('email', 'email');
-    addColumn('phone', 'phone');
-    addColumn('city', 'city');
-
-    // Generate initial CSV
-    generateCSV();
-
+    const stateStr = localStorage.getItem('csvGenFormState');
+    if (stateStr) {
+        try {
+            const state = JSON.parse(stateStr);
+            setFormState(state);
+        } catch (e) {
+            // Ignore restore errors
+        }
+    } else {
+        // Add some default columns if no saved state
+        addColumn('id', 'sequence');
+        addColumn('name', 'fullName');
+        addColumn('email', 'email');
+        addColumn('phone', 'phone');
+        addColumn('city', 'city');
+        generateCSV();
+    }
     // Set current year in footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
-
     setupAutoGenerateEvents();
     handleSeparatorChange();
 });
@@ -442,3 +311,104 @@ function setupAutoGenerateEvents() {
         generateCSV();
     };
 }
+
+// ==========================================
+// Save & Restore Form State
+// ==========================================
+
+function getFormState() {
+    // Get columns
+    const columns = [];
+    document.querySelectorAll('.column-item').forEach(item => {
+        const name = item.querySelector('.column-name').value.trim();
+        const type = item.querySelector('.column-type').value;
+        columns.push({ name, type });
+    });
+    // Get other form values
+    return {
+        columns,
+        rowCount: document.getElementById('rowCount').value,
+        separator: document.getElementById('separator').value,
+        customSeparator: document.getElementById('customSeparator')?.value || '',
+        includeHeader: document.getElementById('includeHeader').checked,
+    };
+}
+
+function setFormState(state) {
+    // Remove all columns
+    document.getElementById('columnsContainer').innerHTML = '';
+    columnCounter = 0;
+    // Add columns
+    if (Array.isArray(state.columns)) {
+        state.columns.forEach(col => addColumn(col.name, col.type));
+    }
+    // Set other form values
+    document.getElementById('rowCount').value = state.rowCount || 10;
+    document.getElementById('separator').value = state.separator || ',';
+    handleSeparatorChange();
+    if (document.getElementById('customSeparator')) {
+        document.getElementById('customSeparator').value = state.customSeparator || '';
+    }
+    document.getElementById('includeHeader').checked = !!state.includeHeader;
+    // Re-attach events for new columns
+    setupAutoGenerateEvents();
+    // Regenerate CSV
+    generateCSV();
+}
+
+function saveFormState() {
+    const state = getFormState();
+    localStorage.setItem('csvGenFormState', JSON.stringify(state));
+}
+
+function restoreFormState() {
+    const stateStr = localStorage.getItem('csvGenFormState');
+    if (!stateStr) {
+        return;
+    }
+    try {
+        const state = JSON.parse(stateStr);
+        setFormState(state);
+    } catch (e) {
+    }
+}
+
+window.saveFormState = saveFormState;
+window.restoreFormState = restoreFormState;
+
+// ==========================================
+// Save & Restore Form State (Auto)
+// ==========================================
+
+// Auto-save form state every time CSV is generated
+const origGenerateCSV = window.generateCSV;
+window.generateCSV = function() {
+    origGenerateCSV();
+    saveFormState();
+};
+
+// Auto-restore form state on page load (if available)
+window.addEventListener('DOMContentLoaded', function() {
+    const stateStr = localStorage.getItem('csvGenFormState');
+    if (stateStr) {
+        try {
+            const state = JSON.parse(stateStr);
+            setFormState(state);
+        } catch (e) {
+            // Ignore restore errors
+        }
+    } else {
+        // Add some default columns if no saved state
+        addColumn('id', 'sequence');
+        addColumn('name', 'fullName');
+        addColumn('email', 'email');
+        addColumn('phone', 'phone');
+        addColumn('city', 'city');
+        generateCSV();
+    }
+    // Set current year in footer
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    setupAutoGenerateEvents();
+    handleSeparatorChange();
+});
+
