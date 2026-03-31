@@ -46,8 +46,13 @@ public/
 - To add a new data type, edit `constants/dataTypes.js` and add a generator in `helper.js` if needed
 
 ## License
-MIT
 
----
+MIT License
 
-**CSV Generator** by Heru Rusdianto. All processing is done in your browser, safe and private.
+## Contributing
+
+Contributions are welcome! Feel free to submit a Pull Request.
+
+## Demo
+
+[https://herusdianto.github.io/csv-gen/](https://herusdianto.github.io/csv-gen/)
